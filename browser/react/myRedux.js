@@ -14,8 +14,8 @@ function reducer (state = initialState, action) {
 const store = createStore(reducer);
 
 
-console.log(store.getState());
-console.log(store.dispatch( { type: RECEIVE_ALBUMS_FROM_SERVER, albums: ['fake album 1', 'fake album 2']}));
-console.log(store.getState());
+store.getState();
+store.dispatch( { type: RECEIVE_ALBUMS_FROM_SERVER, albums: []});
+store.getState();
 
 export default store;

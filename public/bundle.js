@@ -54,17 +54,26 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _AppContainer = __webpack_require__(172);
+	var _reactRedux = __webpack_require__(172);
+	
+	var _AppContainer = __webpack_require__(196);
 	
 	var _AppContainer2 = _interopRequireDefault(_AppContainer);
 	
-	var _myRedux = __webpack_require__(179);
+	var _myRedux = __webpack_require__(203);
 	
 	var _myRedux2 = _interopRequireDefault(_myRedux);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_reactDom2.default.render(_react2.default.createElement(_AppContainer2.default, null), document.getElementById('app'));
+	_reactDom2.default.render(_react2.default.createElement(
+		_reactRedux.Provider,
+		{ store: _myRedux2.default },
+		_react2.default.createElement(_AppContainer2.default, null)
+	));
+	
+	// ,
+	// document.getElementById('app')
 
 /***/ },
 /* 1 */
@@ -21439,39 +21448,42 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
+	exports.connect = exports.Provider = undefined;
 	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _Provider = __webpack_require__(173);
+	
+	var _Provider2 = _interopRequireDefault(_Provider);
+	
+	var _connect = __webpack_require__(176);
+	
+	var _connect2 = _interopRequireDefault(_connect);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	exports.Provider = _Provider2["default"];
+	exports.connect = _connect2["default"];
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
+	
+	exports.__esModule = true;
+	exports["default"] = undefined;
 	
 	var _react = __webpack_require__(1);
 	
-	var _react2 = _interopRequireDefault(_react);
+	var _storeShape = __webpack_require__(174);
 	
-	var _initialState = __webpack_require__(173);
+	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _initialState2 = _interopRequireDefault(_initialState);
+	var _warning = __webpack_require__(175);
 	
-	var _audio = __webpack_require__(174);
+	var _warning2 = _interopRequireDefault(_warning);
 	
-	var _audio2 = _interopRequireDefault(_audio);
-	
-	var _Sidebar = __webpack_require__(175);
-	
-	var _Sidebar2 = _interopRequireDefault(_Sidebar);
-	
-	var _Album = __webpack_require__(176);
-	
-	var _Album2 = _interopRequireDefault(_Album);
-	
-	var _Player = __webpack_require__(178);
-	
-	var _Player2 = _interopRequireDefault(_Player);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
@@ -21479,380 +21491,537 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var convertSong = function convertSong(song) {
-	  song.audioUrl = '/api/songs/' + song.id + '/audio';
-	  return song;
-	};
+	var didWarnAboutReceivingStore = false;
+	function warnAboutReceivingStore() {
+	  if (didWarnAboutReceivingStore) {
+	    return;
+	  }
+	  didWarnAboutReceivingStore = true;
 	
-	var convertAlbum = function convertAlbum(album) {
-	  album.imageUrl = '/api/albums/' + album.id + '/image';
-	  album.songs = album.songs.map(convertSong);
-	  return album;
-	};
+	  (0, _warning2["default"])('<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/reactjs/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
+	}
 	
-	var mod = function mod(num, m) {
-	  return (num % m + m) % m;
-	};
+	var Provider = function (_Component) {
+	  _inherits(Provider, _Component);
 	
-	var skip = function skip(interval, _ref) {
-	  var currentSongList = _ref.currentSongList;
-	  var currentSong = _ref.currentSong;
+	  Provider.prototype.getChildContext = function getChildContext() {
+	    return { store: this.store };
+	  };
 	
-	  var idx = currentSongList.map(function (song) {
-	    return song.id;
-	  }).indexOf(currentSong.id);
-	  idx = mod(idx + interval, currentSongList.length);
-	  var next = currentSongList[idx];
-	  return [next, currentSongList];
-	};
+	  function Provider(props, context) {
+	    _classCallCheck(this, Provider);
 	
-	var AppContainer = function (_Component) {
-	  _inherits(AppContainer, _Component);
+	    var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
 	
-	  function AppContainer(props) {
-	    _classCallCheck(this, AppContainer);
-	
-	    var _this = _possibleConstructorReturn(this, (AppContainer.__proto__ || Object.getPrototypeOf(AppContainer)).call(this, props));
-	
-	    _this.state = _initialState2.default;
-	
-	    _this.toggle = _this.toggle.bind(_this);
-	    _this.toggleOne = _this.toggleOne.bind(_this);
-	    _this.next = _this.next.bind(_this);
-	    _this.prev = _this.prev.bind(_this);
+	    _this.store = props.store;
 	    return _this;
 	  }
 	
-	  _createClass(AppContainer, [{
-	    key: 'componentDidMount',
-	    value: function componentDidMount() {
-	      var _this2 = this;
+	  Provider.prototype.render = function render() {
+	    var children = this.props.children;
 	
-	      fetch('/api/albums/1').then(function (res) {
-	        return res.json();
-	      }).then(function (album) {
-	        return _this2.onLoad(convertAlbum(album));
-	      });
+	    return _react.Children.only(children);
+	  };
 	
-	      _audio2.default.addEventListener('ended', function () {
-	        return _this2.next();
-	      });
-	      _audio2.default.addEventListener('timeupdate', function () {
-	        return _this2.setProgress(_audio2.default.currentTime / _audio2.default.duration);
-	      });
-	    }
-	  }, {
-	    key: 'onLoad',
-	    value: function onLoad(album) {
-	      this.setState({ album: album });
-	    }
-	  }, {
-	    key: 'play',
-	    value: function play() {
-	      _audio2.default.play();
-	      this.setState({ isPlaying: true });
-	    }
-	  }, {
-	    key: 'pause',
-	    value: function pause() {
-	      _audio2.default.pause();
-	      this.setState({ isPlaying: false });
-	    }
-	  }, {
-	    key: 'load',
-	    value: function load(currentSong, currentSongList) {
-	      _audio2.default.src = currentSong.audioUrl;
-	      _audio2.default.load();
-	      this.setState({ currentSong: currentSong, currentSongList: currentSongList });
-	    }
-	  }, {
-	    key: 'startSong',
-	    value: function startSong(song, list) {
-	      this.pause();
-	      this.load(song, list);
-	      this.play();
-	    }
-	  }, {
-	    key: 'toggleOne',
-	    value: function toggleOne(selectedSong, selectedSongList) {
-	      if (selectedSong.id !== this.state.currentSong.id) this.startSong(selectedSong, selectedSongList);else this.toggle();
-	    }
-	  }, {
-	    key: 'toggle',
-	    value: function toggle() {
-	      if (this.state.isPlaying) this.pause();else this.play();
-	    }
-	  }, {
-	    key: 'next',
-	    value: function next() {
-	      this.startSong.apply(this, _toConsumableArray(skip(1, this.state)));
-	    }
-	  }, {
-	    key: 'prev',
-	    value: function prev() {
-	      this.startSong.apply(this, _toConsumableArray(skip(-1, this.state)));
-	    }
-	  }, {
-	    key: 'seek',
-	    value: function seek(decimal) {
-	      _audio2.default.currentTime = _audio2.default.duration * decimal;
-	      this.setProgress(_audio2.default.currentTime / _audio2.default.duration);
-	    }
-	  }, {
-	    key: 'setProgress',
-	    value: function setProgress(progress) {
-	      this.setState({ progress: progress });
-	    }
-	  }, {
-	    key: 'render',
-	    value: function render() {
-	      var _this3 = this;
-	
-	      return _react2.default.createElement(
-	        'div',
-	        { id: 'main', className: 'container-fluid' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'col-xs-2' },
-	          _react2.default.createElement(_Sidebar2.default, null)
-	        ),
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'col-xs-10' },
-	          _react2.default.createElement(_Album2.default, {
-	            album: this.state.album,
-	            currentSong: this.state.currentSong,
-	            isPlaying: this.state.isPlaying,
-	            toggle: this.toggleOne
-	          })
-	        ),
-	        _react2.default.createElement(_Player2.default, {
-	          currentSong: this.state.currentSong,
-	          currentSongList: this.state.currentSongList,
-	          isPlaying: this.state.isPlaying,
-	          progress: this.state.progress,
-	          next: this.next,
-	          prev: this.prev,
-	          toggle: this.toggle,
-	          scrub: function scrub(evt) {
-	            return _this3.seek(evt.nativeEvent.offsetX / evt.target.clientWidth);
-	          }
-	        })
-	      );
-	    }
-	  }]);
-	
-	  return AppContainer;
+	  return Provider;
 	}(_react.Component);
 	
-	exports.default = AppContainer;
-
-/***/ },
-/* 173 */
-/***/ function(module, exports) {
-
-	"use strict";
+	exports["default"] = Provider;
 	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var initialState = {
-	    albums: [],
-	    album: {},
-	    currentSong: {},
-	    currentSongList: [],
-	    isPlaying: false,
-	    progress: 0
+	if (process.env.NODE_ENV !== 'production') {
+	  Provider.prototype.componentWillReceiveProps = function (nextProps) {
+	    var store = this.store;
+	    var nextStore = nextProps.store;
+	
+	    if (store !== nextStore) {
+	      warnAboutReceivingStore();
+	    }
+	  };
+	}
+	
+	Provider.propTypes = {
+	  store: _storeShape2["default"].isRequired,
+	  children: _react.PropTypes.element.isRequired
 	};
-	exports.default = initialState;
+	Provider.childContextTypes = {
+	  store: _storeShape2["default"].isRequired
+	};
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 174 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	var AUDIO = document.createElement('audio');
-	exports.default = AUDIO;
-
-/***/ },
-/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
 	
 	var _react = __webpack_require__(1);
 	
-	var _react2 = _interopRequireDefault(_react);
+	exports["default"] = _react.PropTypes.shape({
+	  subscribe: _react.PropTypes.func.isRequired,
+	  dispatch: _react.PropTypes.func.isRequired,
+	  getState: _react.PropTypes.func.isRequired
+	});
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	'use strict';
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = function () {
-	  return _react2.default.createElement(
-	    'sidebar',
-	    null,
-	    _react2.default.createElement('img', { src: 'juke.svg', className: 'logo' }),
-	    _react2.default.createElement(
-	      'section',
-	      null,
-	      _react2.default.createElement(
-	        'h4',
-	        { className: 'menu-item active' },
-	        _react2.default.createElement(
-	          'a',
-	          { href: '#' },
-	          'ALBUMS'
-	        )
-	      )
-	    )
-	  );
-	};
+	exports.__esModule = true;
+	exports["default"] = warning;
+	/**
+	 * Prints a warning in the console if it exists.
+	 *
+	 * @param {String} message The warning message.
+	 * @returns {void}
+	 */
+	function warning(message) {
+	  /* eslint-disable no-console */
+	  if (typeof console !== 'undefined' && typeof console.error === 'function') {
+	    console.error(message);
+	  }
+	  /* eslint-enable no-console */
+	  try {
+	    // This error was thrown as a convenience so that you can use this stack
+	    // to find the callsite that caused this warning to fire.
+	    throw new Error(message);
+	    /* eslint-disable no-empty */
+	  } catch (e) {}
+	  /* eslint-enable no-empty */
+	}
 
 /***/ },
 /* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	exports.__esModule = true;
+	exports["default"] = connect;
 	
 	var _react = __webpack_require__(1);
 	
-	var _react2 = _interopRequireDefault(_react);
+	var _storeShape = __webpack_require__(174);
 	
-	var _Songs = __webpack_require__(177);
+	var _storeShape2 = _interopRequireDefault(_storeShape);
 	
-	var _Songs2 = _interopRequireDefault(_Songs);
+	var _shallowEqual = __webpack_require__(177);
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	var _shallowEqual2 = _interopRequireDefault(_shallowEqual);
 	
-	exports.default = function (_ref) {
-	  var album = _ref.album;
-	  var currentSong = _ref.currentSong;
-	  var isPlaying = _ref.isPlaying;
-	  var toggle = _ref.toggle;
-	  return _react2.default.createElement(
-	    'div',
-	    { className: 'album' },
-	    _react2.default.createElement(
-	      'div',
-	      null,
-	      _react2.default.createElement(
-	        'h3',
-	        null,
-	        album.name
-	      ),
-	      _react2.default.createElement('img', { src: album.imageUrl, className: 'img-thumbnail' })
-	    ),
-	    _react2.default.createElement(_Songs2.default, {
-	      songs: album.songs,
-	      currentSong: currentSong,
-	      isPlaying: isPlaying,
-	      toggle: toggle })
-	  );
+	var _wrapActionCreators = __webpack_require__(178);
+	
+	var _wrapActionCreators2 = _interopRequireDefault(_wrapActionCreators);
+	
+	var _warning = __webpack_require__(175);
+	
+	var _warning2 = _interopRequireDefault(_warning);
+	
+	var _isPlainObject = __webpack_require__(181);
+	
+	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
+	
+	var _hoistNonReactStatics = __webpack_require__(194);
+	
+	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
+	
+	var _invariant = __webpack_require__(195);
+	
+	var _invariant2 = _interopRequireDefault(_invariant);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var defaultMapStateToProps = function defaultMapStateToProps(state) {
+	  return {};
+	}; // eslint-disable-line no-unused-vars
+	var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
+	  return { dispatch: dispatch };
 	};
+	var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
+	  return _extends({}, parentProps, stateProps, dispatchProps);
+	};
+	
+	function getDisplayName(WrappedComponent) {
+	  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+	}
+	
+	var errorObject = { value: null };
+	function tryCatch(fn, ctx) {
+	  try {
+	    return fn.apply(ctx);
+	  } catch (e) {
+	    errorObject.value = e;
+	    return errorObject;
+	  }
+	}
+	
+	// Helps track hot reloading.
+	var nextVersion = 0;
+	
+	function connect(mapStateToProps, mapDispatchToProps, mergeProps) {
+	  var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
+	
+	  var shouldSubscribe = Boolean(mapStateToProps);
+	  var mapState = mapStateToProps || defaultMapStateToProps;
+	
+	  var mapDispatch = undefined;
+	  if (typeof mapDispatchToProps === 'function') {
+	    mapDispatch = mapDispatchToProps;
+	  } else if (!mapDispatchToProps) {
+	    mapDispatch = defaultMapDispatchToProps;
+	  } else {
+	    mapDispatch = (0, _wrapActionCreators2["default"])(mapDispatchToProps);
+	  }
+	
+	  var finalMergeProps = mergeProps || defaultMergeProps;
+	  var _options$pure = options.pure;
+	  var pure = _options$pure === undefined ? true : _options$pure;
+	  var _options$withRef = options.withRef;
+	  var withRef = _options$withRef === undefined ? false : _options$withRef;
+	
+	  var checkMergedEquals = pure && finalMergeProps !== defaultMergeProps;
+	
+	  // Helps track hot reloading.
+	  var version = nextVersion++;
+	
+	  return function wrapWithConnect(WrappedComponent) {
+	    var connectDisplayName = 'Connect(' + getDisplayName(WrappedComponent) + ')';
+	
+	    function checkStateShape(props, methodName) {
+	      if (!(0, _isPlainObject2["default"])(props)) {
+	        (0, _warning2["default"])(methodName + '() in ' + connectDisplayName + ' must return a plain object. ' + ('Instead received ' + props + '.'));
+	      }
+	    }
+	
+	    function computeMergedProps(stateProps, dispatchProps, parentProps) {
+	      var mergedProps = finalMergeProps(stateProps, dispatchProps, parentProps);
+	      if (process.env.NODE_ENV !== 'production') {
+	        checkStateShape(mergedProps, 'mergeProps');
+	      }
+	      return mergedProps;
+	    }
+	
+	    var Connect = function (_Component) {
+	      _inherits(Connect, _Component);
+	
+	      Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate() {
+	        return !pure || this.haveOwnPropsChanged || this.hasStoreStateChanged;
+	      };
+	
+	      function Connect(props, context) {
+	        _classCallCheck(this, Connect);
+	
+	        var _this = _possibleConstructorReturn(this, _Component.call(this, props, context));
+	
+	        _this.version = version;
+	        _this.store = props.store || context.store;
+	
+	        (0, _invariant2["default"])(_this.store, 'Could not find "store" in either the context or ' + ('props of "' + connectDisplayName + '". ') + 'Either wrap the root component in a <Provider>, ' + ('or explicitly pass "store" as a prop to "' + connectDisplayName + '".'));
+	
+	        var storeState = _this.store.getState();
+	        _this.state = { storeState: storeState };
+	        _this.clearCache();
+	        return _this;
+	      }
+	
+	      Connect.prototype.computeStateProps = function computeStateProps(store, props) {
+	        if (!this.finalMapStateToProps) {
+	          return this.configureFinalMapState(store, props);
+	        }
+	
+	        var state = store.getState();
+	        var stateProps = this.doStatePropsDependOnOwnProps ? this.finalMapStateToProps(state, props) : this.finalMapStateToProps(state);
+	
+	        if (process.env.NODE_ENV !== 'production') {
+	          checkStateShape(stateProps, 'mapStateToProps');
+	        }
+	        return stateProps;
+	      };
+	
+	      Connect.prototype.configureFinalMapState = function configureFinalMapState(store, props) {
+	        var mappedState = mapState(store.getState(), props);
+	        var isFactory = typeof mappedState === 'function';
+	
+	        this.finalMapStateToProps = isFactory ? mappedState : mapState;
+	        this.doStatePropsDependOnOwnProps = this.finalMapStateToProps.length !== 1;
+	
+	        if (isFactory) {
+	          return this.computeStateProps(store, props);
+	        }
+	
+	        if (process.env.NODE_ENV !== 'production') {
+	          checkStateShape(mappedState, 'mapStateToProps');
+	        }
+	        return mappedState;
+	      };
+	
+	      Connect.prototype.computeDispatchProps = function computeDispatchProps(store, props) {
+	        if (!this.finalMapDispatchToProps) {
+	          return this.configureFinalMapDispatch(store, props);
+	        }
+	
+	        var dispatch = store.dispatch;
+	
+	        var dispatchProps = this.doDispatchPropsDependOnOwnProps ? this.finalMapDispatchToProps(dispatch, props) : this.finalMapDispatchToProps(dispatch);
+	
+	        if (process.env.NODE_ENV !== 'production') {
+	          checkStateShape(dispatchProps, 'mapDispatchToProps');
+	        }
+	        return dispatchProps;
+	      };
+	
+	      Connect.prototype.configureFinalMapDispatch = function configureFinalMapDispatch(store, props) {
+	        var mappedDispatch = mapDispatch(store.dispatch, props);
+	        var isFactory = typeof mappedDispatch === 'function';
+	
+	        this.finalMapDispatchToProps = isFactory ? mappedDispatch : mapDispatch;
+	        this.doDispatchPropsDependOnOwnProps = this.finalMapDispatchToProps.length !== 1;
+	
+	        if (isFactory) {
+	          return this.computeDispatchProps(store, props);
+	        }
+	
+	        if (process.env.NODE_ENV !== 'production') {
+	          checkStateShape(mappedDispatch, 'mapDispatchToProps');
+	        }
+	        return mappedDispatch;
+	      };
+	
+	      Connect.prototype.updateStatePropsIfNeeded = function updateStatePropsIfNeeded() {
+	        var nextStateProps = this.computeStateProps(this.store, this.props);
+	        if (this.stateProps && (0, _shallowEqual2["default"])(nextStateProps, this.stateProps)) {
+	          return false;
+	        }
+	
+	        this.stateProps = nextStateProps;
+	        return true;
+	      };
+	
+	      Connect.prototype.updateDispatchPropsIfNeeded = function updateDispatchPropsIfNeeded() {
+	        var nextDispatchProps = this.computeDispatchProps(this.store, this.props);
+	        if (this.dispatchProps && (0, _shallowEqual2["default"])(nextDispatchProps, this.dispatchProps)) {
+	          return false;
+	        }
+	
+	        this.dispatchProps = nextDispatchProps;
+	        return true;
+	      };
+	
+	      Connect.prototype.updateMergedPropsIfNeeded = function updateMergedPropsIfNeeded() {
+	        var nextMergedProps = computeMergedProps(this.stateProps, this.dispatchProps, this.props);
+	        if (this.mergedProps && checkMergedEquals && (0, _shallowEqual2["default"])(nextMergedProps, this.mergedProps)) {
+	          return false;
+	        }
+	
+	        this.mergedProps = nextMergedProps;
+	        return true;
+	      };
+	
+	      Connect.prototype.isSubscribed = function isSubscribed() {
+	        return typeof this.unsubscribe === 'function';
+	      };
+	
+	      Connect.prototype.trySubscribe = function trySubscribe() {
+	        if (shouldSubscribe && !this.unsubscribe) {
+	          this.unsubscribe = this.store.subscribe(this.handleChange.bind(this));
+	          this.handleChange();
+	        }
+	      };
+	
+	      Connect.prototype.tryUnsubscribe = function tryUnsubscribe() {
+	        if (this.unsubscribe) {
+	          this.unsubscribe();
+	          this.unsubscribe = null;
+	        }
+	      };
+	
+	      Connect.prototype.componentDidMount = function componentDidMount() {
+	        this.trySubscribe();
+	      };
+	
+	      Connect.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	        if (!pure || !(0, _shallowEqual2["default"])(nextProps, this.props)) {
+	          this.haveOwnPropsChanged = true;
+	        }
+	      };
+	
+	      Connect.prototype.componentWillUnmount = function componentWillUnmount() {
+	        this.tryUnsubscribe();
+	        this.clearCache();
+	      };
+	
+	      Connect.prototype.clearCache = function clearCache() {
+	        this.dispatchProps = null;
+	        this.stateProps = null;
+	        this.mergedProps = null;
+	        this.haveOwnPropsChanged = true;
+	        this.hasStoreStateChanged = true;
+	        this.haveStatePropsBeenPrecalculated = false;
+	        this.statePropsPrecalculationError = null;
+	        this.renderedElement = null;
+	        this.finalMapDispatchToProps = null;
+	        this.finalMapStateToProps = null;
+	      };
+	
+	      Connect.prototype.handleChange = function handleChange() {
+	        if (!this.unsubscribe) {
+	          return;
+	        }
+	
+	        var storeState = this.store.getState();
+	        var prevStoreState = this.state.storeState;
+	        if (pure && prevStoreState === storeState) {
+	          return;
+	        }
+	
+	        if (pure && !this.doStatePropsDependOnOwnProps) {
+	          var haveStatePropsChanged = tryCatch(this.updateStatePropsIfNeeded, this);
+	          if (!haveStatePropsChanged) {
+	            return;
+	          }
+	          if (haveStatePropsChanged === errorObject) {
+	            this.statePropsPrecalculationError = errorObject.value;
+	          }
+	          this.haveStatePropsBeenPrecalculated = true;
+	        }
+	
+	        this.hasStoreStateChanged = true;
+	        this.setState({ storeState: storeState });
+	      };
+	
+	      Connect.prototype.getWrappedInstance = function getWrappedInstance() {
+	        (0, _invariant2["default"])(withRef, 'To access the wrapped instance, you need to specify ' + '{ withRef: true } as the fourth argument of the connect() call.');
+	
+	        return this.refs.wrappedInstance;
+	      };
+	
+	      Connect.prototype.render = function render() {
+	        var haveOwnPropsChanged = this.haveOwnPropsChanged;
+	        var hasStoreStateChanged = this.hasStoreStateChanged;
+	        var haveStatePropsBeenPrecalculated = this.haveStatePropsBeenPrecalculated;
+	        var statePropsPrecalculationError = this.statePropsPrecalculationError;
+	        var renderedElement = this.renderedElement;
+	
+	        this.haveOwnPropsChanged = false;
+	        this.hasStoreStateChanged = false;
+	        this.haveStatePropsBeenPrecalculated = false;
+	        this.statePropsPrecalculationError = null;
+	
+	        if (statePropsPrecalculationError) {
+	          throw statePropsPrecalculationError;
+	        }
+	
+	        var shouldUpdateStateProps = true;
+	        var shouldUpdateDispatchProps = true;
+	        if (pure && renderedElement) {
+	          shouldUpdateStateProps = hasStoreStateChanged || haveOwnPropsChanged && this.doStatePropsDependOnOwnProps;
+	          shouldUpdateDispatchProps = haveOwnPropsChanged && this.doDispatchPropsDependOnOwnProps;
+	        }
+	
+	        var haveStatePropsChanged = false;
+	        var haveDispatchPropsChanged = false;
+	        if (haveStatePropsBeenPrecalculated) {
+	          haveStatePropsChanged = true;
+	        } else if (shouldUpdateStateProps) {
+	          haveStatePropsChanged = this.updateStatePropsIfNeeded();
+	        }
+	        if (shouldUpdateDispatchProps) {
+	          haveDispatchPropsChanged = this.updateDispatchPropsIfNeeded();
+	        }
+	
+	        var haveMergedPropsChanged = true;
+	        if (haveStatePropsChanged || haveDispatchPropsChanged || haveOwnPropsChanged) {
+	          haveMergedPropsChanged = this.updateMergedPropsIfNeeded();
+	        } else {
+	          haveMergedPropsChanged = false;
+	        }
+	
+	        if (!haveMergedPropsChanged && renderedElement) {
+	          return renderedElement;
+	        }
+	
+	        if (withRef) {
+	          this.renderedElement = (0, _react.createElement)(WrappedComponent, _extends({}, this.mergedProps, {
+	            ref: 'wrappedInstance'
+	          }));
+	        } else {
+	          this.renderedElement = (0, _react.createElement)(WrappedComponent, this.mergedProps);
+	        }
+	
+	        return this.renderedElement;
+	      };
+	
+	      return Connect;
+	    }(_react.Component);
+	
+	    Connect.displayName = connectDisplayName;
+	    Connect.WrappedComponent = WrappedComponent;
+	    Connect.contextTypes = {
+	      store: _storeShape2["default"]
+	    };
+	    Connect.propTypes = {
+	      store: _storeShape2["default"]
+	    };
+	
+	    if (process.env.NODE_ENV !== 'production') {
+	      Connect.prototype.componentWillUpdate = function componentWillUpdate() {
+	        if (this.version === version) {
+	          return;
+	        }
+	
+	        // We are hot reloading!
+	        this.version = version;
+	        this.trySubscribe();
+	        this.clearCache();
+	      };
+	    }
+	
+	    return (0, _hoistNonReactStatics2["default"])(Connect, WrappedComponent);
+	  };
+	}
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
 /* 177 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
+	exports["default"] = shallowEqual;
+	function shallowEqual(objA, objB) {
+	  if (objA === objB) {
+	    return true;
+	  }
 	
-	var _react = __webpack_require__(1);
+	  var keysA = Object.keys(objA);
+	  var keysB = Object.keys(objB);
 	
-	var _react2 = _interopRequireDefault(_react);
+	  if (keysA.length !== keysB.length) {
+	    return false;
+	  }
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	  // Test for A's keys different from B.
+	  var hasOwn = Object.prototype.hasOwnProperty;
+	  for (var i = 0; i < keysA.length; i++) {
+	    if (!hasOwn.call(objB, keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
+	      return false;
+	    }
+	  }
 	
-	exports.default = function (_ref) {
-	  var songs = _ref.songs;
-	  var currentSong = _ref.currentSong;
-	  var isPlaying = _ref.isPlaying;
-	  var toggle = _ref.toggle;
-	  return _react2.default.createElement(
-	    'table',
-	    { className: 'table' },
-	    _react2.default.createElement(
-	      'thead',
-	      null,
-	      _react2.default.createElement(
-	        'tr',
-	        null,
-	        _react2.default.createElement('th', null),
-	        _react2.default.createElement(
-	          'th',
-	          null,
-	          'Name'
-	        ),
-	        _react2.default.createElement(
-	          'th',
-	          null,
-	          'Artists'
-	        ),
-	        _react2.default.createElement(
-	          'th',
-	          null,
-	          'Genre'
-	        )
-	      )
-	    ),
-	    _react2.default.createElement(
-	      'tbody',
-	      null,
-	      songs && songs.map(function (song) {
-	        return _react2.default.createElement(
-	          'tr',
-	          { key: song.id },
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            _react2.default.createElement(
-	              'button',
-	              { className: 'btn btn-default btn-xs', onClick: function onClick() {
-	                  return toggle(song, songs);
-	                } },
-	              _react2.default.createElement('span', { className: song.id === currentSong.id && isPlaying ? "glyphicon glyphicon-pause" : "glyphicon glyphicon-play" })
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            song.name
-	          ),
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            _react2.default.createElement(
-	              'span',
-	              null,
-	              song.artists ? song.artists.map(function (artist) {
-	                return artist.name;
-	              }).join(', ') : null
-	            )
-	          ),
-	          _react2.default.createElement(
-	            'td',
-	            null,
-	            song.genre
-	          )
-	        );
-	      })
-	    )
-	  );
-	};
+	  return true;
+	}
 
 /***/ },
 /* 178 */
@@ -21860,107 +22029,19 @@
 
 	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
+	exports.__esModule = true;
+	exports["default"] = wrapActionCreators;
 	
-	var _react = __webpack_require__(1);
+	var _redux = __webpack_require__(179);
 	
-	var _react2 = _interopRequireDefault(_react);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = function (_ref) {
-	  var currentSong = _ref.currentSong;
-	  var currentSongList = _ref.currentSongList;
-	  var isPlaying = _ref.isPlaying;
-	  var progress = _ref.progress;
-	  var prev = _ref.prev;
-	  var toggle = _ref.toggle;
-	  var next = _ref.next;
-	  var scrub = _ref.scrub;
-	  return _react2.default.createElement(
-	    'footer',
-	    null,
-	    _react2.default.createElement(
-	      'div',
-	      { style: !currentSong.id ? { display: 'none' } : null },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'pull-left' },
-	        _react2.default.createElement(
-	          'button',
-	          { className: 'btn btn-default', onClick: prev },
-	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-backward' })
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { className: 'btn btn-default', onClick: toggle },
-	          _react2.default.createElement('span', { className: isPlaying ? 'glyphicon glyphicon-pause' : 'glyphicon glyphicon-play' })
-	        ),
-	        _react2.default.createElement(
-	          'button',
-	          { className: 'btn btn-default', onClick: next },
-	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-forward' })
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'bar' },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'progress', onClick: function onClick(evt) {
-	              return isPlaying ? scrub(evt) : null;
-	            } },
-	          _react2.default.createElement('div', { className: 'progress-bar', style: { width: progress * 100 + '%' } })
-	        )
-	      )
-	    )
-	  );
-	};
+	function wrapActionCreators(actionCreators) {
+	  return function (dispatch) {
+	    return (0, _redux.bindActionCreators)(actionCreators, dispatch);
+	  };
+	}
 
 /***/ },
 /* 179 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _initialState = __webpack_require__(173);
-	
-	var _initialState2 = _interopRequireDefault(_initialState);
-	
-	var _redux = __webpack_require__(180);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
-	
-	function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _initialState2.default;
-	    var action = arguments[1];
-	
-	    switch (action.type) {
-	        case RECEIVE_ALBUMS_FROM_SERVER:
-	            return Object.assign({}, state, { albums: action.albums });
-	        default:
-	            return state;
-	    }
-	}
-	
-	var store = (0, _redux.createStore)(reducer);
-	
-	console.log(store.getState());
-	console.log(store.dispatch({ type: RECEIVE_ALBUMS_FROM_SERVER, albums: ['fake album 1', 'fake album 2'] }));
-	console.log(store.getState());
-	
-	exports.default = store;
-
-/***/ },
-/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -21968,27 +22049,27 @@
 	exports.__esModule = true;
 	exports.compose = exports.applyMiddleware = exports.bindActionCreators = exports.combineReducers = exports.createStore = undefined;
 	
-	var _createStore = __webpack_require__(181);
+	var _createStore = __webpack_require__(180);
 	
 	var _createStore2 = _interopRequireDefault(_createStore);
 	
-	var _combineReducers = __webpack_require__(190);
+	var _combineReducers = __webpack_require__(189);
 	
 	var _combineReducers2 = _interopRequireDefault(_combineReducers);
 	
-	var _bindActionCreators = __webpack_require__(192);
+	var _bindActionCreators = __webpack_require__(191);
 	
 	var _bindActionCreators2 = _interopRequireDefault(_bindActionCreators);
 	
-	var _applyMiddleware = __webpack_require__(193);
+	var _applyMiddleware = __webpack_require__(192);
 	
 	var _applyMiddleware2 = _interopRequireDefault(_applyMiddleware);
 	
-	var _compose = __webpack_require__(194);
+	var _compose = __webpack_require__(193);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
-	var _warning = __webpack_require__(191);
+	var _warning = __webpack_require__(190);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -22012,7 +22093,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 181 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22021,11 +22102,11 @@
 	exports.ActionTypes = undefined;
 	exports['default'] = createStore;
 	
-	var _isPlainObject = __webpack_require__(182);
+	var _isPlainObject = __webpack_require__(181);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _symbolObservable = __webpack_require__(186);
+	var _symbolObservable = __webpack_require__(185);
 	
 	var _symbolObservable2 = _interopRequireDefault(_symbolObservable);
 	
@@ -22278,11 +22359,11 @@
 	}
 
 /***/ },
-/* 182 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getPrototype = __webpack_require__(183),
-	    isObjectLike = __webpack_require__(185);
+	var getPrototype = __webpack_require__(182),
+	    isObjectLike = __webpack_require__(184);
 	
 	/** `Object#toString` result references. */
 	var objectTag = '[object Object]';
@@ -22352,10 +22433,10 @@
 
 
 /***/ },
-/* 183 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var overArg = __webpack_require__(184);
+	var overArg = __webpack_require__(183);
 	
 	/** Built-in value references. */
 	var getPrototype = overArg(Object.getPrototypeOf, Object);
@@ -22364,7 +22445,7 @@
 
 
 /***/ },
-/* 184 */
+/* 183 */
 /***/ function(module, exports) {
 
 	/**
@@ -22385,7 +22466,7 @@
 
 
 /***/ },
-/* 185 */
+/* 184 */
 /***/ function(module, exports) {
 
 	/**
@@ -22420,14 +22501,14 @@
 
 
 /***/ },
-/* 186 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(187);
+	module.exports = __webpack_require__(186);
 
 
 /***/ },
-/* 187 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module, global) {'use strict';
@@ -22436,7 +22517,7 @@
 	  value: true
 	});
 	
-	var _ponyfill = __webpack_require__(189);
+	var _ponyfill = __webpack_require__(188);
 	
 	var _ponyfill2 = _interopRequireDefault(_ponyfill);
 	
@@ -22457,10 +22538,10 @@
 	
 	var result = (0, _ponyfill2['default'])(root);
 	exports['default'] = result;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(188)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(187)(module), (function() { return this; }())))
 
 /***/ },
-/* 188 */
+/* 187 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -22476,7 +22557,7 @@
 
 
 /***/ },
-/* 189 */
+/* 188 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22504,7 +22585,7 @@
 	};
 
 /***/ },
-/* 190 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
@@ -22512,13 +22593,13 @@
 	exports.__esModule = true;
 	exports['default'] = combineReducers;
 	
-	var _createStore = __webpack_require__(181);
+	var _createStore = __webpack_require__(180);
 	
-	var _isPlainObject = __webpack_require__(182);
+	var _isPlainObject = __webpack_require__(181);
 	
 	var _isPlainObject2 = _interopRequireDefault(_isPlainObject);
 	
-	var _warning = __webpack_require__(191);
+	var _warning = __webpack_require__(190);
 	
 	var _warning2 = _interopRequireDefault(_warning);
 	
@@ -22652,7 +22733,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 191 */
+/* 190 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22682,7 +22763,7 @@
 	}
 
 /***/ },
-/* 192 */
+/* 191 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -22738,7 +22819,7 @@
 	}
 
 /***/ },
-/* 193 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -22749,7 +22830,7 @@
 	
 	exports['default'] = applyMiddleware;
 	
-	var _compose = __webpack_require__(194);
+	var _compose = __webpack_require__(193);
 	
 	var _compose2 = _interopRequireDefault(_compose);
 	
@@ -22801,7 +22882,7 @@
 	}
 
 /***/ },
-/* 194 */
+/* 193 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -22842,6 +22923,646 @@
 	    }, last.apply(undefined, arguments));
 	  };
 	}
+
+/***/ },
+/* 194 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copyright 2015, Yahoo! Inc.
+	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
+	 */
+	'use strict';
+	
+	var REACT_STATICS = {
+	    childContextTypes: true,
+	    contextTypes: true,
+	    defaultProps: true,
+	    displayName: true,
+	    getDefaultProps: true,
+	    mixins: true,
+	    propTypes: true,
+	    type: true
+	};
+	
+	var KNOWN_STATICS = {
+	    name: true,
+	    length: true,
+	    prototype: true,
+	    caller: true,
+	    arguments: true,
+	    arity: true
+	};
+	
+	var isGetOwnPropertySymbolsAvailable = typeof Object.getOwnPropertySymbols === 'function';
+	
+	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent, customStatics) {
+	    if (typeof sourceComponent !== 'string') { // don't hoist over string (html) components
+	        var keys = Object.getOwnPropertyNames(sourceComponent);
+	
+	        /* istanbul ignore else */
+	        if (isGetOwnPropertySymbolsAvailable) {
+	            keys = keys.concat(Object.getOwnPropertySymbols(sourceComponent));
+	        }
+	
+	        for (var i = 0; i < keys.length; ++i) {
+	            if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]] && (!customStatics || !customStatics[keys[i]])) {
+	                try {
+	                    targetComponent[keys[i]] = sourceComponent[keys[i]];
+	                } catch (error) {
+	
+	                }
+	            }
+	        }
+	    }
+	
+	    return targetComponent;
+	};
+
+
+/***/ },
+/* 195 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2013-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+	
+	'use strict';
+	
+	/**
+	 * Use invariant() to assert state which your program assumes to be true.
+	 *
+	 * Provide sprintf-style format (only %s is supported) and arguments
+	 * to provide information about what broke and what you were
+	 * expecting.
+	 *
+	 * The invariant message will be stripped in production, but the invariant
+	 * will remain to ensure logic does not differ in production.
+	 */
+	
+	var invariant = function(condition, format, a, b, c, d, e, f) {
+	  if (process.env.NODE_ENV !== 'production') {
+	    if (format === undefined) {
+	      throw new Error('invariant requires an error message argument');
+	    }
+	  }
+	
+	  if (!condition) {
+	    var error;
+	    if (format === undefined) {
+	      error = new Error(
+	        'Minified exception occurred; use the non-minified dev environment ' +
+	        'for the full error message and additional helpful warnings.'
+	      );
+	    } else {
+	      var args = [a, b, c, d, e, f];
+	      var argIndex = 0;
+	      error = new Error(
+	        format.replace(/%s/g, function() { return args[argIndex++]; })
+	      );
+	      error.name = 'Invariant Violation';
+	    }
+	
+	    error.framesToPop = 1; // we don't care about invariant's own frame
+	    throw error;
+	  }
+	};
+	
+	module.exports = invariant;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _initialState = __webpack_require__(197);
+	
+	var _initialState2 = _interopRequireDefault(_initialState);
+	
+	var _audio = __webpack_require__(198);
+	
+	var _audio2 = _interopRequireDefault(_audio);
+	
+	var _Sidebar = __webpack_require__(199);
+	
+	var _Sidebar2 = _interopRequireDefault(_Sidebar);
+	
+	var _Album = __webpack_require__(200);
+	
+	var _Album2 = _interopRequireDefault(_Album);
+	
+	var _Player = __webpack_require__(202);
+	
+	var _Player2 = _interopRequireDefault(_Player);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var convertSong = function convertSong(song) {
+	  song.audioUrl = '/api/songs/' + song.id + '/audio';
+	  return song;
+	};
+	
+	var convertAlbum = function convertAlbum(album) {
+	  album.imageUrl = '/api/albums/' + album.id + '/image';
+	  album.songs = album.songs.map(convertSong);
+	  return album;
+	};
+	
+	var mod = function mod(num, m) {
+	  return (num % m + m) % m;
+	};
+	
+	var skip = function skip(interval, _ref) {
+	  var currentSongList = _ref.currentSongList;
+	  var currentSong = _ref.currentSong;
+	
+	  var idx = currentSongList.map(function (song) {
+	    return song.id;
+	  }).indexOf(currentSong.id);
+	  idx = mod(idx + interval, currentSongList.length);
+	  var next = currentSongList[idx];
+	  return [next, currentSongList];
+	};
+	
+	var AppContainer = function (_Component) {
+	  _inherits(AppContainer, _Component);
+	
+	  function AppContainer(props) {
+	    _classCallCheck(this, AppContainer);
+	
+	    var _this = _possibleConstructorReturn(this, (AppContainer.__proto__ || Object.getPrototypeOf(AppContainer)).call(this, props));
+	
+	    _this.state = _initialState2.default;
+	
+	    _this.toggle = _this.toggle.bind(_this);
+	    _this.toggleOne = _this.toggleOne.bind(_this);
+	    _this.next = _this.next.bind(_this);
+	    _this.prev = _this.prev.bind(_this);
+	    return _this;
+	  }
+	
+	  _createClass(AppContainer, [{
+	    key: 'componentDidMount',
+	    value: function componentDidMount() {
+	      var _this2 = this;
+	
+	      fetch('/api/albums/1').then(function (res) {
+	        return res.json();
+	      }).then(function (album) {
+	        return _this2.onLoad(convertAlbum(album));
+	      });
+	
+	      _audio2.default.addEventListener('ended', function () {
+	        return _this2.next();
+	      });
+	      _audio2.default.addEventListener('timeupdate', function () {
+	        return _this2.setProgress(_audio2.default.currentTime / _audio2.default.duration);
+	      });
+	    }
+	  }, {
+	    key: 'onLoad',
+	    value: function onLoad(album) {
+	      this.setState({ album: album });
+	    }
+	  }, {
+	    key: 'play',
+	    value: function play() {
+	      _audio2.default.play();
+	      this.setState({ isPlaying: true });
+	    }
+	  }, {
+	    key: 'pause',
+	    value: function pause() {
+	      _audio2.default.pause();
+	      this.setState({ isPlaying: false });
+	    }
+	  }, {
+	    key: 'load',
+	    value: function load(currentSong, currentSongList) {
+	      _audio2.default.src = currentSong.audioUrl;
+	      _audio2.default.load();
+	      this.setState({ currentSong: currentSong, currentSongList: currentSongList });
+	    }
+	  }, {
+	    key: 'startSong',
+	    value: function startSong(song, list) {
+	      this.pause();
+	      this.load(song, list);
+	      this.play();
+	    }
+	  }, {
+	    key: 'toggleOne',
+	    value: function toggleOne(selectedSong, selectedSongList) {
+	      if (selectedSong.id !== this.state.currentSong.id) this.startSong(selectedSong, selectedSongList);else this.toggle();
+	    }
+	  }, {
+	    key: 'toggle',
+	    value: function toggle() {
+	      if (this.state.isPlaying) this.pause();else this.play();
+	    }
+	  }, {
+	    key: 'next',
+	    value: function next() {
+	      this.startSong.apply(this, _toConsumableArray(skip(1, this.state)));
+	    }
+	  }, {
+	    key: 'prev',
+	    value: function prev() {
+	      this.startSong.apply(this, _toConsumableArray(skip(-1, this.state)));
+	    }
+	  }, {
+	    key: 'seek',
+	    value: function seek(decimal) {
+	      _audio2.default.currentTime = _audio2.default.duration * decimal;
+	      this.setProgress(_audio2.default.currentTime / _audio2.default.duration);
+	    }
+	  }, {
+	    key: 'setProgress',
+	    value: function setProgress(progress) {
+	      this.setState({ progress: progress });
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+	
+	      return _react2.default.createElement(
+	        'div',
+	        { id: 'main', className: 'container-fluid' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-xs-2' },
+	          _react2.default.createElement(_Sidebar2.default, null)
+	        ),
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'col-xs-10' },
+	          _react2.default.createElement(_Album2.default, {
+	            album: this.state.album,
+	            currentSong: this.state.currentSong,
+	            isPlaying: this.state.isPlaying,
+	            toggle: this.toggleOne
+	          })
+	        ),
+	        _react2.default.createElement(_Player2.default, {
+	          currentSong: this.state.currentSong,
+	          currentSongList: this.state.currentSongList,
+	          isPlaying: this.state.isPlaying,
+	          progress: this.state.progress,
+	          next: this.next,
+	          prev: this.prev,
+	          toggle: this.toggle,
+	          scrub: function scrub(evt) {
+	            return _this3.seek(evt.nativeEvent.offsetX / evt.target.clientWidth);
+	          }
+	        })
+	      );
+	    }
+	  }]);
+	
+	  return AppContainer;
+	}(_react.Component);
+	
+	exports.default = AppContainer;
+
+/***/ },
+/* 197 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	var initialState = {
+	    albums: [],
+	    album: {},
+	    currentSong: {},
+	    currentSongList: [],
+	    isPlaying: false,
+	    progress: 0
+	};
+	exports.default = initialState;
+
+/***/ },
+/* 198 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var AUDIO = document.createElement('audio');
+	exports.default = AUDIO;
+
+/***/ },
+/* 199 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function () {
+	  return _react2.default.createElement(
+	    'sidebar',
+	    null,
+	    _react2.default.createElement('img', { src: 'juke.svg', className: 'logo' }),
+	    _react2.default.createElement(
+	      'section',
+	      null,
+	      _react2.default.createElement(
+	        'h4',
+	        { className: 'menu-item active' },
+	        _react2.default.createElement(
+	          'a',
+	          { href: '#' },
+	          'ALBUMS'
+	        )
+	      )
+	    )
+	  );
+	};
+
+/***/ },
+/* 200 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Songs = __webpack_require__(201);
+	
+	var _Songs2 = _interopRequireDefault(_Songs);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	  var album = _ref.album;
+	  var currentSong = _ref.currentSong;
+	  var isPlaying = _ref.isPlaying;
+	  var toggle = _ref.toggle;
+	  return _react2.default.createElement(
+	    'div',
+	    { className: 'album' },
+	    _react2.default.createElement(
+	      'div',
+	      null,
+	      _react2.default.createElement(
+	        'h3',
+	        null,
+	        album.name
+	      ),
+	      _react2.default.createElement('img', { src: album.imageUrl, className: 'img-thumbnail' })
+	    ),
+	    _react2.default.createElement(_Songs2.default, {
+	      songs: album.songs,
+	      currentSong: currentSong,
+	      isPlaying: isPlaying,
+	      toggle: toggle })
+	  );
+	};
+
+/***/ },
+/* 201 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	  var songs = _ref.songs;
+	  var currentSong = _ref.currentSong;
+	  var isPlaying = _ref.isPlaying;
+	  var toggle = _ref.toggle;
+	  return _react2.default.createElement(
+	    'table',
+	    { className: 'table' },
+	    _react2.default.createElement(
+	      'thead',
+	      null,
+	      _react2.default.createElement(
+	        'tr',
+	        null,
+	        _react2.default.createElement('th', null),
+	        _react2.default.createElement(
+	          'th',
+	          null,
+	          'Name'
+	        ),
+	        _react2.default.createElement(
+	          'th',
+	          null,
+	          'Artists'
+	        ),
+	        _react2.default.createElement(
+	          'th',
+	          null,
+	          'Genre'
+	        )
+	      )
+	    ),
+	    _react2.default.createElement(
+	      'tbody',
+	      null,
+	      songs && songs.map(function (song) {
+	        return _react2.default.createElement(
+	          'tr',
+	          { key: song.id },
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            _react2.default.createElement(
+	              'button',
+	              { className: 'btn btn-default btn-xs', onClick: function onClick() {
+	                  return toggle(song, songs);
+	                } },
+	              _react2.default.createElement('span', { className: song.id === currentSong.id && isPlaying ? "glyphicon glyphicon-pause" : "glyphicon glyphicon-play" })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            song.name
+	          ),
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            _react2.default.createElement(
+	              'span',
+	              null,
+	              song.artists ? song.artists.map(function (artist) {
+	                return artist.name;
+	              }).join(', ') : null
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            song.genre
+	          )
+	        );
+	      })
+	    )
+	  );
+	};
+
+/***/ },
+/* 202 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (_ref) {
+	  var currentSong = _ref.currentSong;
+	  var currentSongList = _ref.currentSongList;
+	  var isPlaying = _ref.isPlaying;
+	  var progress = _ref.progress;
+	  var prev = _ref.prev;
+	  var toggle = _ref.toggle;
+	  var next = _ref.next;
+	  var scrub = _ref.scrub;
+	  return _react2.default.createElement(
+	    'footer',
+	    null,
+	    _react2.default.createElement(
+	      'div',
+	      { style: !currentSong.id ? { display: 'none' } : null },
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'pull-left' },
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'btn btn-default', onClick: prev },
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-backward' })
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'btn btn-default', onClick: toggle },
+	          _react2.default.createElement('span', { className: isPlaying ? 'glyphicon glyphicon-pause' : 'glyphicon glyphicon-play' })
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          { className: 'btn btn-default', onClick: next },
+	          _react2.default.createElement('span', { className: 'glyphicon glyphicon-step-forward' })
+	        )
+	      ),
+	      _react2.default.createElement(
+	        'div',
+	        { className: 'bar' },
+	        _react2.default.createElement(
+	          'div',
+	          { className: 'progress', onClick: function onClick(evt) {
+	              return isPlaying ? scrub(evt) : null;
+	            } },
+	          _react2.default.createElement('div', { className: 'progress-bar', style: { width: progress * 100 + '%' } })
+	        )
+	      )
+	    )
+	  );
+	};
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _initialState = __webpack_require__(197);
+	
+	var _initialState2 = _interopRequireDefault(_initialState);
+	
+	var _redux = __webpack_require__(179);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
+	
+	function reducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _initialState2.default;
+	    var action = arguments[1];
+	
+	    switch (action.type) {
+	        case RECEIVE_ALBUMS_FROM_SERVER:
+	            return Object.assign({}, state, { albums: action.albums });
+	        default:
+	            return state;
+	    }
+	}
+	
+	var store = (0, _redux.createStore)(reducer);
+	
+	store.getState();
+	store.dispatch({ type: RECEIVE_ALBUMS_FROM_SERVER, albums: [] });
+	store.getState();
+	
+	exports.default = store;
 
 /***/ }
 /******/ ]);
