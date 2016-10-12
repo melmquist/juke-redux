@@ -10,6 +10,7 @@ const RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
 const START_PLAYING = 'START_PLAYING';
 const STOP_PLAYING = 'STOP_PLAYING';
 const SET_CURRENT_SONG = 'SET_CURRENT_SONG';
+const GET_ONE_ALBUM = 'GET_ONE_ALBUM';
 
 // const LOAD_SONG = 'LOAD_SONG';
 // const START_SONG = 'START_SONG';
@@ -38,9 +39,15 @@ export function setCurrentSong(currentSong, currentSongList){
 	}
 }
 
+export function getOneAlbum() {
+  return {
+    type: GET_ONE_ALBUM
+  }
+}
 
 
 
+//HELPER FUNCS FOR Below
 const isPlaying = (state = false, action) => {
 	switch (action.type) {
 		case START_PLAYING: return true;
@@ -64,6 +71,42 @@ const currentSongList = (state = [], action ) => {
 };
 
 
+function albums (state = [], action) {
+    switch(action.type) {
+        case RECEIVE_ALBUMS_FROM_SERVER:
+          return action.albums
+        default: return state;
+    }
+}
+
+const album = (state = {}, action) => {
+  switch (action.type) {
+    case GET_ONE_ALBUM:
+      return action.album;
+    default: return state;
+  }
+}
+
+
+
+
+
+const convertSong = song => {
+  song.audioUrl = `/api/songs/${song.id}/audio`;
+  return song;
+};
+
+const convertAlbum = album => {
+  album.imageUrl = `/api/albums/${album.id}/image`;
+  album.songs = album.songs.map(convertSong);
+  return album;
+};
+
+const convertAlbums = albums => {
+  albums.map(album => convertAlbum(album))
+  return albums
+}
+
 const rootReducer = combineReducers({
 	albums,
 	isPlaying,
@@ -72,19 +115,8 @@ const rootReducer = combineReducers({
 });
 
 
-function albums (state = initialState, action) {
-    switch(action.type) {
-        case RECEIVE_ALBUMS_FROM_SERVER:
-        	return Object.assign({}, state, { albums: action.albums });
-		// case START_PLAYING:
-		// 	return Object.assign({}, state, { isPlaying: true });
-		// case STOP_PLAYING:
-		// 	return Object.assign({}, state, { isPlaying: false });
-		// case SET_CURRENT_SONG:
-		// 	return Object.assign({}, state, { currentSong, currentSongList });
-        default: return state;
-    }
-}
+
+
 
 
 
@@ -97,33 +129,25 @@ export function receiveAlbumsFromServer(albums) {
 	}
 }
 
-// export function fetchAlbumsFromServer() {
-// 	return dispatch => {
-//     fetch('/api/albums')
-//       .then(res => res.json())
-//       // use the dispatch method the thunkMiddleware gave us
-//       .then(albums => dispatch(receiveAlbumsFromServer(albums)))
-//   }
-// }
-
-
-//HELPER FUNCS FOR Below
-const convertSong = song => {
-	song.audioUrl = `/api/songs/${song.id}/audio`;
-	return song;
-};
-
-const convertAlbum = album => {
-	album.imageUrl = `/api/albums/${album.id}/image`;
-	album.songs = album.songs.map(convertSong);
-	return album;
-};
-
-export const receiveAlbumsAsync = () => dispatch => {
-	return fetch('/api/albums')
-	.then(res => res.json())
-	.then(albums => dispatch(receiveAlbumsFromServer(convertAlbum(albums))));
+export function fetchAlbumsFromServer() {
+	return dispatch => {
+    fetch('/api/albums')
+      .then(res => res.json())
+      // use the dispatch method the thunkMiddleware gave us
+      .then(albums => {
+        return dispatch(receiveAlbumsFromServer(convertAlbums(albums)))
+      })
+  }
 }
+
+
+
+
+// export const receiveAlbumsAsync = () => dispatch => {
+// 	return fetch('/api/albums')
+// 	.then(res => res.json())
+// 	.then(albums => dispatch(receiveAlbumsFromServer(convertAlbum(albums))));
+// }
 
 
 

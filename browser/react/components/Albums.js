@@ -28,13 +28,12 @@ export default class Albums extends React.Component {
 
 	render () {
 		const albums = this.props.albums
-
 		return (
 			<div>
 				<h3>Albums</h3>
 				<div className="row">
 				{
-					albums && albums.map(album => (
+					albums.length > 0 && albums.map(album => (
 					<div key={album.id} className="col-xs-4">
 						<a className="thumbnail" href="#">
 							<img src={'/api/albums/' + album.id + '/image'} />

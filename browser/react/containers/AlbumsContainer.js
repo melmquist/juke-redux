@@ -14,13 +14,13 @@ import { receiveAlbumsFromServer, fetchAlbumsFromServer} from '../myRedux';
 
 
 
-const mapStateToProps = function (state, ownProps) {
+const mapStateToProps = function (state) {
 	return {
 		albums: state.albums
 	}
 }
 
-const mapDispatchToProps = function (dispatch, ownProps) {
+const mapDispatchToProps = function (dispatch) {
 	return {
 		loadAlbums: () => dispatch(fetchAlbumsFromServer())
 	}
