@@ -9,6 +9,8 @@ import Sidebar from '../components/Sidebar';
 import Album from '../components/Album';
 import Player from '../components/Player';
 
+import AlbumsContainer from './AlbumsContainer';
+
 const convertSong = song => {
   song.audioUrl = `/api/songs/${song.id}/audio`;
   return song;
@@ -34,7 +36,7 @@ export default class AppContainer extends Component {
   constructor (props) {
     super(props);
     this.state = initialState;
-    
+
     this.toggle = this.toggle.bind(this);
     this.toggleOne = this.toggleOne.bind(this);
     this.next = this.next.bind(this);
@@ -45,10 +47,10 @@ export default class AppContainer extends Component {
     fetch('/api/albums/1')
       .then(res => res.json())
       .then(album => this.onLoad(convertAlbum(album)));
-    
-    AUDIO.addEventListener('ended', () => 
+
+    AUDIO.addEventListener('ended', () =>
       this.next());
-    AUDIO.addEventListener('timeupdate', () => 
+    AUDIO.addEventListener('timeupdate', () =>
       this.setProgress(AUDIO.currentTime / AUDIO.duration));
   }
 
@@ -113,8 +115,9 @@ export default class AppContainer extends Component {
           <Sidebar />
         </div>
         <div className="col-xs-10">
-          <Album 
-            album={this.state.album} 
+        <AlbumsContainer />
+          <Album
+            album={this.state.album}
             currentSong={this.state.currentSong}
             isPlaying={this.state.isPlaying}
             toggle={this.toggleOne}
@@ -128,7 +131,7 @@ export default class AppContainer extends Component {
           next={this.next}
           prev={this.prev}
           toggle={this.toggle}
-          scrub={evt => this.seek(evt.nativeEvent.offsetX / evt.target.clientWidth)} 
+          scrub={evt => this.seek(evt.nativeEvent.offsetX / evt.target.clientWidth)}
         />
       </div>
     );

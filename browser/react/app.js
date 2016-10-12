@@ -4,14 +4,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import AppContainer from './containers/AppContainer';
+// import AlbumsContainer from './containers/AlbumsContainer';
 import store from './myRedux';
 
 ReactDOM.render(
 	<Provider store={store}>
 		<AppContainer />
 	</Provider>
-
+	,
+	document.getElementById('app')
 );
-
-	// ,
-	// document.getElementById('app')

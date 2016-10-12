@@ -1,7 +1,7 @@
 import initialState from './initialState.js';
 import { createStore } from 'redux';
 
-const RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
+export const RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
 
 function reducer (state = initialState, action) {
     switch(action.type) {

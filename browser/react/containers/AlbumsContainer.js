@@ -8,8 +8,9 @@
 // import Sidebar from '../components/Sidebar';
 // import Player from '../components/Player';
 
-import connect from 'react-redux'
+import { connect } from 'react-redux'
 import Albums from '../components/Albums';
+import RECEIVE_ALBUMS_FROM_SERVER from '../myRedux';
 
 const mapStateToProps = function (state, ownProps) {
 	return {

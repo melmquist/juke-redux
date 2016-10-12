@@ -60,7 +60,7 @@
 	
 	var _AppContainer2 = _interopRequireDefault(_AppContainer);
 	
-	var _myRedux = __webpack_require__(203);
+	var _myRedux = __webpack_require__(205);
 	
 	var _myRedux2 = _interopRequireDefault(_myRedux);
 	
@@ -70,10 +70,8 @@
 		_reactRedux.Provider,
 		{ store: _myRedux2.default },
 		_react2.default.createElement(_AppContainer2.default, null)
-	));
-	
-	// ,
-	// document.getElementById('app')
+	), document.getElementById('app'));
+	// import AlbumsContainer from './containers/AlbumsContainer';
 
 /***/ },
 /* 1 */
@@ -23074,6 +23072,10 @@
 	
 	var _Player2 = _interopRequireDefault(_Player);
 	
+	var _AlbumsContainer = __webpack_require__(203);
+	
+	var _AlbumsContainer2 = _interopRequireDefault(_AlbumsContainer);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
@@ -23224,6 +23226,7 @@
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'col-xs-10' },
+	          _react2.default.createElement(_AlbumsContainer2.default, null),
 	          _react2.default.createElement(_Album2.default, {
 	            album: this.state.album,
 	            currentSong: this.state.currentSong,
@@ -23530,9 +23533,207 @@
 
 	'use strict';
 	
+	// import React, { Component } from 'react';
+	
+	// import initialState from '../initialState';
+	// import AUDIO from '../audio';
+	
+	// import Sidebar from '../components/Sidebar';
+	// import Player from '../components/Player';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _reactRedux = __webpack_require__(172);
+	
+	var _Albums = __webpack_require__(204);
+	
+	var _Albums2 = _interopRequireDefault(_Albums);
+	
+	var _myRedux = __webpack_require__(205);
+	
+	var _myRedux2 = _interopRequireDefault(_myRedux);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var mapStateToProps = function mapStateToProps(state, ownProps) {
+		return {
+			albums: state.albums
+		};
+	};
+	
+	var mapDispatchToProps = function mapDispatchToProps(dispatch, ownProps) {
+		return {
+			// note that I'm using enhanced object method notation
+			loadAlbums: function loadAlbums(albums) {
+				dispatch({ type: _myRedux2.default, albums: albums }); // hm, could we shorten this, too?
+			}
+		};
+	};
+	
+	var AlbumsContainer = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(_Albums2.default);
+	
+	exports.default = AlbumsContainer;
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	// export default ({ album, currentSong, isPlaying, toggle }) => (
+	// <div>
+	// 	<h3>Albums</h3>
+	// 	<div className="row">
+	// 		<div className="col-xs-4">
+	// 			<a className="thumbnail" href="#">
+	// 				<img src="http://placeholdit.imgix.net/~text?txtsize=33&txt=ALBUMoneIMAGE&w=300&h=300" />
+	// 				<div className="caption">
+	// 					<h5>
+	// 						<span>ALBUM ONE NAME HERE</span>
+	// 					</h5>
+	// 					<small>NUMBER OF SONGS HERE songs</small>
+	// 				</div>
+	// 			</a>
+	// 		</div>
+	// 		<div className="col-xs-4">
+	// 			<a className="thumbnail" href="#">
+	// 				<img src="http://placeholdit.imgix.net/~text?txtsize=33&txt=ALBUMtwoIMAGE&w=300&h=300" />
+	// 				<div className="caption">
+	// 					<h5>
+	// 						<span>ALBUM TWO NAME HERE</span>
+	// 					</h5>
+	// 					<small>NUMBER OF SONGS HERE songs</small>
+	// 				</div>
+	// 			</a>
+	// 		</div>
+	// 	</div>
+	// </div>
+	// );
+	
+	// const convertSong = song => {
+	// 	song.audioUrl = `/api/songs/${song.id}/audio`;
+	// 	return song;
+	// };
+	
+	// const convertAlbum = album => {
+	// 	album.imageUrl = `/api/albums/${album.id}/image`;
+	// 	album.songs = album.songs.map(convertSong);
+	// 	return album;
+	// };
+	
+	
+	var Albums = function (_React$Component) {
+		_inherits(Albums, _React$Component);
+	
+		function Albums() {
+			_classCallCheck(this, Albums);
+	
+			return _possibleConstructorReturn(this, (Albums.__proto__ || Object.getPrototypeOf(Albums)).apply(this, arguments));
+		}
+	
+		_createClass(Albums, [{
+			key: 'componentDidMount',
+	
+			// onLoad (albums) {
+			//   this.setState({ albums });
+			// //   console.log("THIS.STATE", this.state);
+			// }
+	
+			value: function componentDidMount() {
+				var _this2 = this;
+	
+				fetch('/api/albums').then(function (res) {
+					return res.json();
+				}).then(function (albums) {
+					// console.log("ALBUMS ON LOAD: ");
+					// this.onLoad(albums)
+					_this2.props.loadAlbums(albums);
+				});
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				var albums = this.props.albums;
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(
+						'h3',
+						null,
+						'Albums'
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'row' },
+						albums && albums.map(function (album) {
+							return _react2.default.createElement(
+								'div',
+								{ className: 'col-xs-4' },
+								_react2.default.createElement(
+									'a',
+									{ className: 'thumbnail', href: '#' },
+									_react2.default.createElement('img', { src: 'http://placeholdit.imgix.net/~text?txtsize=33&txt=ALBUMoneIMAGE&w=300&h=300' }),
+									_react2.default.createElement(
+										'div',
+										{ className: 'caption' },
+										_react2.default.createElement(
+											'h5',
+											null,
+											_react2.default.createElement(
+												'span',
+												null,
+												album.name
+											)
+										),
+										_react2.default.createElement(
+											'small',
+											null,
+											'NUMBER OF SONGS HERE songs'
+										)
+									)
+								)
+							);
+						})
+					)
+				);
+			}
+		}]);
+	
+		return Albums;
+	}(_react2.default.Component);
+	
+	exports.default = Albums;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
+	exports.RECEIVE_ALBUMS_FROM_SERVER = undefined;
 	
 	var _initialState = __webpack_require__(197);
 	
@@ -23542,7 +23743,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
+	var RECEIVE_ALBUMS_FROM_SERVER = exports.RECEIVE_ALBUMS_FROM_SERVER = 'RECEIVE_ALBUMS_FROM_SERVER';
 	
 	function reducer() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : _initialState2.default;
