@@ -10,7 +10,9 @@
 
 import { connect } from 'react-redux'
 import Albums from '../components/Albums';
-import RECEIVE_ALBUMS_FROM_SERVER from '../myRedux';
+import { receiveAlbumsFromServer, fetchAlbumsFromServer} from '../myRedux';
+
+
 
 const mapStateToProps = function (state, ownProps) {
 	return {
@@ -20,10 +22,7 @@ const mapStateToProps = function (state, ownProps) {
 
 const mapDispatchToProps = function (dispatch, ownProps) {
 	return {
-		// note that I'm using enhanced object method notation
-		loadAlbums (albums) {
-			dispatch({ type: RECEIVE_ALBUMS_FROM_SERVER, albums: albums }); // hm, could we shorten this, too?
-		}
+		loadAlbums: () => dispatch(fetchAlbumsFromServer())
 	}
 }
 
