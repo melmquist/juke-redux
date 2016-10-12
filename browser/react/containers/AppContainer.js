@@ -1,15 +1,30 @@
 'use strict';
 
 import React, { Component } from 'react';
-
 import initialState from '../initialState';
 import AUDIO from '../audio';
-
 import Sidebar from '../components/Sidebar';
 import Album from '../components/Album';
 import Player from '../components/Player';
-
 import AlbumsContainer from './AlbumsContainer';
+import { play, pause, load, startSong, toggle, toggleOne} from '../myRedux';
+
+
+const mapStateToProps = function (state, ownProps) {
+	return {
+		albums: state.albums
+	}
+}
+
+const mapDispatchToProps = function (dispatch, ownProps) {
+	return {
+		loadAlbums: () => dispatch(fetchAlbumsFromServer())
+	}
+}
+
+const AppContainer = connect(mapStateToProps, mapDispatchToProps)(Albums);
+
+
 
 const convertSong = song => {
   song.audioUrl = `/api/songs/${song.id}/audio`;
